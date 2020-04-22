@@ -26,6 +26,6 @@ pm2 log 可查看该项目的日志
 
 ## 参考
 
-+ 慕课网的视频: mooc.com/learn/1199
-+ sequelize官网: sequelize.org/v5/
-+ express官网: expressjs.com
++ [慕课网的视频](https://www.imooc.com/learn/1199)
++ [sequelize官网](https://sequelize.org/)
++ [express官网](https://expressjs.com)

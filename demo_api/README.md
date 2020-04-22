@@ -1,4 +1,4 @@
-# 本文件时一个node.js的API尝试
+# 本文件是一个node.js的API尝试
 
 此项目只完成了数据的曾与查，为的是让自己了解一下node.js与express的编写方式
 

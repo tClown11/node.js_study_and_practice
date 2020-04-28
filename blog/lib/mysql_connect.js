@@ -25,5 +25,31 @@ const User = sequelize.define('user', {
     timestamps: false
 })
 //User.sync({ alter: true })
+const Article = sequelize.define('article', {
+    author: {
+        type: DataTypes.INTEGER,
+    },
+    title: {
+        type: DataTypes.TEXT
+    },
+    content: {
+        type: DataTypes.TEXT
+    },
+    pv: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    }
+},{
+    sequelize,
+    modelName: 'article',
+    //timestamps: false
+})
+//Article.sync({ alter: true })
     
-module.exports = User
+Article.belongsTo(User, {foreignKey: 
+'author', targetKey: 'id'});
+
+module.exports = {
+    User,
+    Article
+}

@@ -1,4 +1,4 @@
-const User= require('../lib/mysql_connect')
+const User= require('../lib/mysql_connect').User
 
 
 module.exports = {

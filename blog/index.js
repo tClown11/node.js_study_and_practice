@@ -2,6 +2,7 @@ const path = require('path')
 const express = require('express')
 const cookieParser = require('cookie-parser')
 //const session = require('express-session')
+const moment = require('moment');
 // mysql链接
 const MysqlStore = require('mysql2')
 //const flash = require('connect-flash')
@@ -18,6 +19,11 @@ app.set('view engine', 'ejs')
 
 // 设置静态文件目录
 app.use(express.static(path.join(__dirname, 'public')))
+
+//时间格式化
+app.locals.dateFormat = function(date) {
+  return moment(date).format('YYYY-MM-DD HH:mm:ss');
+}
 
 // cookie
 app.use(cookieParser())
@@ -39,7 +45,7 @@ app.locals.blog = {
 
 // 添加模板必需的三个变量
  app.use(function (req, res, next) {
-   res.locals.user = req.cookies.user
+   res.locals.user = req.cookies['user']
 //   //res.locals.success = req.flash('success').toString()
 //   //res.locals.error = req.flash('error').toString()
      next()

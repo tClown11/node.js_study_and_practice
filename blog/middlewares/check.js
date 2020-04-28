@@ -3,14 +3,14 @@ module.exports = {
     checkLogin: function checkLogin(req, res, next) {
         //引入redis进行判断是否存在token
         if (req.cookies['user']==undefined&& req.cookies['token']==undefined) {
-            return next()
+            return res.redirect('/signin')
         }
         client.get(req.cookies['user'], (err, result)=>{
             if (result==req.cookies['token']) {
                 // 跳转到主页
-                return res.redirect('/posts')
-            }else{
                 return next()
+            }else{
+                return res.redirect('/signin')
             }
         })
     },

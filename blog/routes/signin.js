@@ -9,7 +9,7 @@ const checkLogin = require('../middlewares/check').checkLogin
 const screctkey = 'KJG*^&_DVF'
 
 //GET /signin 登录页
-router.get('/', checkLogin, function(req,res,next){
+router.get('/', function(req,res,next){
     res.render('signin')
 })
 
@@ -41,6 +41,7 @@ router.post('/', function(req,res,next){
       // 用户信息写入 cookie
       res.cookie('user', user.name, {maxAge: 60*60*24})
       res.cookie('token', jwt_token(password), {maxAge: 60*60*24})
+      res.cookie('uid', user.id, {maxAge: 60*60*24})
 
       //登录信息写入redis
       client.setex(user.name, 60*60*24, jwt_token(password))

@@ -29,7 +29,11 @@ module.exports = {
         return await Post.findOne({
             where: {
                 id: postId
-            }
+            },
+            include: [{
+                model: User,  // 此处必须为一个 function，不能是一个table名称
+                attributes: ['name', 'id'],
+            }],
         })
     },
 
@@ -42,7 +46,7 @@ module.exports = {
             order: ['createdAt', 'DESC'],
             limit: 10,
             include: [{
-                model: User,
+                model: User,  // 此处必须为一个 function，不能是一个table名称
                 attributes: ['name', 'id'],
             }],
         })
@@ -54,7 +58,7 @@ module.exports = {
             order: [['createdAt', 'DESC']],
             limit: 10,
             include: [{
-                model: User,
+                model: User,  // 此处必须为一个 function，不能是一个table名称
                 attributes: ['name', 'id'],
             }],
         })
@@ -64,10 +68,11 @@ module.exports = {
     incPv: async function incPv (postId) {
         return await Post.findOne({
             where: {
-                author: postId
+                id: postId
             }
         })
         .then(function (result){
+            //console.log(result)
             result.increment('pv')
         })
     },
@@ -88,7 +93,11 @@ module.exports = {
         return await Post.update({title: titles, content: data}, {
             where: {
                 id: postId
-            }
+            },
+            include: [{
+                model: User, // 此处必须为一个 function，不能是一个table名称
+                attributes: ['name', 'id'],
+            }],
         })
     },
 
@@ -97,7 +106,7 @@ module.exports = {
         return await Post.destroy({
             where: {
                 id: postId
-            }
+            },
         })
     }
   

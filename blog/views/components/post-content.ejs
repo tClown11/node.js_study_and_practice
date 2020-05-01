@@ -3,7 +3,7 @@
       <div class="four wide column">
         <a class="avatar avatar-link"
            href="/posts?author=<%= post.author %>"
-           data-content="<%= post.author.bio %>">
+           data-content="<%= post.userId %>">
         </a>
       </div>
   
@@ -18,7 +18,7 @@
               <span>浏览(<%= post.pv || 0 %>)</span>
               <span>留言(<%= post.commentsCount || 0 %>)</span>
   
-              <% if (post.user.id  === post.author) { %>
+              <% if (post.user.id  === post.userId) { %>
                 <div class="ui inline dropdown">
                   <div class="text"></div>
                   <i class="dropdown icon"></i>

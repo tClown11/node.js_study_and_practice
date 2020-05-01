@@ -63,4 +63,4 @@ exports 和 module.exports 的区别:
 
 + [github地址](https://github.com/nswbmw/N-blog)
 
-+ [sequelize的外键查询](https://blog.csdn.net/lvyuan1234/article/details/86727703)
++ [sequelize的联表查询](https://blog.csdn.net/lvyuan1234/article/details/86727703)

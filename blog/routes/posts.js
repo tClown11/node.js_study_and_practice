@@ -5,9 +5,10 @@ const checkLogin = require('../middlewares/check').checkLogin
 
 // GET /posts 所有用户或者特定用户的文章页
 //   eg: GET /posts?author=xxx
-router.get('/',checkLogin, function (req, res, next) {
+router.get('/', checkLogin, function (req, res, next) {
     PostModel.getPosts()
     .then(function (posts) {
+      console.log(posts)
       res.render('posts', {
         posts: posts
       })
@@ -17,7 +18,7 @@ router.get('/',checkLogin, function (req, res, next) {
   
   // POST /posts/create 发表一篇文章
   router.post('/create', checkLogin, function (req, res, next) {
-    const author = req.cookies['uid']
+    const userId = req.cookies['uid']
     const title = req.fields.title
     const content = req.fields.content
 
@@ -34,7 +35,7 @@ router.get('/',checkLogin, function (req, res, next) {
     }
 
     let post = {
-      author: author,
+      userId: userId,
       title: title,
       content: content
     }
@@ -54,7 +55,7 @@ router.get('/',checkLogin, function (req, res, next) {
   })
   
   // GET /posts/:postId 单独一篇的文章页
-  router.get('/:postId', function (req, res, next) {
+  router.get('/:postId',checkLogin, function (req, res, next) {
     const postId = req.params.postId
 
   Promise.all([
@@ -77,18 +78,20 @@ router.get('/',checkLogin, function (req, res, next) {
   // GET /posts/:postId/edit 更新文章页
   router.get('/:postId/edit', checkLogin, function (req, res, next) {
     const postId = req.params.postId
-    const author = req.cookies['uid']
+    const currentUserId = req.cookies['uid']
 
     PostModel.getPostById(postId)
-      .then(function (post) {
-        if (!post) {
+      .then(function (article) {
+        if (!article) {
           throw new Error('该文章不存在')
         }
-        if (author !== post.author.toString()) {
+        console.log(article)
+        if (currentUserId !== article.userId.toString()) {
           throw new Error('权限不足')
         }
+        //article.currentUser = userId
         res.render('edit', {
-          post: post
+          post: article
         })
       })
       .catch(next)
@@ -97,7 +100,7 @@ router.get('/',checkLogin, function (req, res, next) {
   // POST /posts/:postId/edit 更新一篇文章
   router.post('/:postId/edit', checkLogin, function (req, res, next) {
     const postId = req.params.postId
-    const author = req.cookies['uid']
+    const currentUserId = req.cookies['uid']
     const title = req.fields.title
     const content = req.fields.content
 
@@ -118,7 +121,7 @@ router.get('/',checkLogin, function (req, res, next) {
     if (!post) {
       throw new Error('文章不存在')
     }
-    if (post.author.toString() !== author) {
+    if (post.userId.toString() !== currentUserId) {
       throw new Error('没有权限')
     }
     PostModel.updatePostById(postId, title, content)
@@ -133,14 +136,14 @@ router.get('/',checkLogin, function (req, res, next) {
   // GET /posts/:postId/remove 删除一篇文章
   router.get('/:postId/remove', checkLogin, function (req, res, next) {
     const postId = req.params.postId
-    const author = req.cookies['uid']
+    const currentUserId = req.cookies['uid']
 
   PostModel.getPostById(postId)
     .then(function (post) {
       if (!post) {
         throw new Error('文章不存在')
       }
-      if (post.author.toString() !== author.toString()) {
+      if (post.userId.toString() !== currentUserId) {
         throw new Error('没有权限')
       }
       PostModel.delPostById(postId)

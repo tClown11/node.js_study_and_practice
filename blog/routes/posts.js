@@ -1,20 +1,32 @@
 const express = require('express')
 const router = express.Router()
 const PostModel = require('../models/posts')
+const CommentModel = require('../models/comments')
 const checkLogin = require('../middlewares/check').checkLogin
 
 // GET /posts 所有用户或者特定用户的文章页
 //   eg: GET /posts?author=xxx
 router.get('/', checkLogin, function (req, res, next) {
+  if (req.query.author) {
+    PostModel.getPostsOfAuthor(req.query.author)
+    .then(function (result) {
+      res.render('posts', {
+        posts: result
+      })
+    })
+    .catch(next)
+  }else {
     PostModel.getPosts()
     .then(function (posts) {
-      console.log(posts)
+      //console.log(posts)
       res.render('posts', {
         posts: posts
       })
     })
     .catch(next)
-  })
+  }
+  
+})
   
   // POST /posts/create 发表一篇文章
   router.post('/create', checkLogin, function (req, res, next) {
@@ -60,16 +72,19 @@ router.get('/', checkLogin, function (req, res, next) {
 
   Promise.all([
     PostModel.getPostById(postId), // 获取文章信息
+    CommentModel.getComments(postId),
     PostModel.incPv(postId)// pv 加 1
   ])
     .then(function (result) {
       const post = result[0]
+      const comments = result[1]
       if (!post) {
         throw new Error('该文章不存在')
       }
-
+     // console.log(result)
       res.render('post', {
-        post: post
+        post: post,
+        comments: comments
       })
     })
     .catch(next)
@@ -85,7 +100,7 @@ router.get('/', checkLogin, function (req, res, next) {
         if (!article) {
           throw new Error('该文章不存在')
         }
-        console.log(article)
+        //console.log(article)
         if (currentUserId !== article.userId.toString()) {
           throw new Error('权限不足')
         }
@@ -146,7 +161,7 @@ router.get('/', checkLogin, function (req, res, next) {
       if (post.userId.toString() !== currentUserId) {
         throw new Error('没有权限')
       }
-      PostModel.delPostById(postId)
+      PostModel.delPostById(post.userId, postId)
         .then(function () {
           // 删除成功后跳转到主页
           res.redirect('/posts')

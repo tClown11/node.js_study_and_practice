@@ -1,5 +1,6 @@
 const Post = require('../lib/mysql_connect').Article
 const User = require('../lib/mysql_connect').User
+const CommentModel = require('./comments').Comment
 // const marked = require('marked');
 
 // // 将 post 的 content 从 markdown 转换成 html
@@ -41,9 +42,9 @@ module.exports = {
     getPostsOfAuthor: async function getPosts (author) {
         return await Post.findAll({
             where: {
-                author
+                userId: author
             },
-            order: ['createdAt', 'DESC'],
+            order: [['createdAt', 'DESC']],
             limit: 10,
             include: [{
                 model: User,  // 此处必须为一个 function，不能是一个table名称
@@ -72,7 +73,6 @@ module.exports = {
             }
         })
         .then(function (result){
-            //console.log(result)
             result.increment('pv')
         })
     },
@@ -102,12 +102,17 @@ module.exports = {
     },
 
     // 通过文章 id 删除一篇文章
-    delPostById: async function delPostById (postId) {
+    delPostById: async function delPostById (userId, postId) {
         return await Post.destroy({
             where: {
+                userId: userId,
                 id: postId
             },
+        }).then(function (res) {
+            // 文章删除后，再删除该文章下的所有留言
+            if (res.result.ok && res.result.n > 0) {
+                return CommentModel.delCommentsByPostId(postId)
+            }
         })
-    }
-  
+    },
 }

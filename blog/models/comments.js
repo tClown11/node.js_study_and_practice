@@ -1,5 +1,6 @@
 //const marked = require('marked')
-const Comment = require('../lib/mongo').Comment
+const Comment = require('../lib/mysql_connect').Comment
+const User = require('../lib/mysql_connect').User
 
 // 将 comment 的 content 从 markdown 转换成 html
 // Comment.plugin('contentToHtml', {
@@ -44,15 +45,22 @@ module.exports = {
   getComments: function getComments (postId) {
     return Comment.findAll({
         where: {
-            postId: postId
+          articleId: postId
         },
-        
-        order: [['createAt', 'ASC']]
+        include: [{
+          model: User, // 此处必须为一个 function，不能是一个table名称
+          attributes: ['name', 'id'],
+      }],
+        order: [['createdAt', 'ASC']]
     })
   },
 
   // 通过文章 id 获取该文章下留言数
   getCommentsCount: function getCommentsCount (postId) {
-    return Comment.count({ postId: postId }).exec()
+    return Comment.count({ 
+      where: {
+        articleId: postId 
+      }
+      })
   }
 }

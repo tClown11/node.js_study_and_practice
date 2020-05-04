@@ -2,7 +2,7 @@
     <div class="ui grid">
       <div class="four wide column">
         <a class="avatar avatar-link"
-           href="/posts?author=<%= post.author %>"
+           href="/posts?author=<%= post.user.id %>"
            data-content="<%= post.userId %>">
         </a>
       </div>
@@ -16,7 +16,7 @@
             <span class="tag right">
               <span><%- dateFormat(post.updatedAt) %></span>
               <span>浏览(<%= post.pv || 0 %>)</span>
-              <span>留言(<%= post.commentsCount || 0 %>)</span>
+              <span>留言(<%= commentsCount(post).commentCount || 0 %>)</span>
   
               <% if (post.user.id  === post.userId) { %>
                 <div class="ui inline dropdown">

@@ -39,9 +39,11 @@ router.post('/', function(req,res,next){
           return res.redirect('back')
       }
       // 用户信息写入 cookie
-      res.cookie('user', user.name, {maxAge: 60*60*24})
-      res.cookie('token', jwt_token(password), {maxAge: 60*60*24})
-      res.cookie('uid', user.id, {maxAge: 60*60*24})
+      res.cookie('user', user.name, {maxAge: 1000*60*60*24}) //24小时过期
+      res.cookie('token', jwt_token(password), {maxAge: 86400*1000}) // 24小时过期
+      res.cookie('uid', user.id, {maxAge: 1000*60*60*24}) //24小时过期
+
+
 
       //登录信息写入redis
       client.setex(user.name, 60*60*24, jwt_token(password))

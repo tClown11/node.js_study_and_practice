@@ -11,6 +11,7 @@ const routes = require('./routes')
 const pkg = require('./package')
 
 const app = express()
+const CommentModel = require('./models/comments')
 
 //设置模板
 app.set('views', path.join(__dirname, 'views'))
@@ -23,6 +24,17 @@ app.use(express.static(path.join(__dirname, 'public')))
 //时间格式化
 app.locals.dateFormat = function(date) {
   return moment(date).format('YYYY-MM-DD HH:mm:ss');
+}
+
+//获取留言数
+app.locals.commentsCount = function(post) {
+  if (post) {
+    return CommentModel.getCommentsCount(post.id).then(function (count) {
+      post.commentCount = count
+      return post
+    })
+  }
+  return post
 }
 
 // cookie
@@ -46,6 +58,7 @@ app.locals.blog = {
 // 添加模板必需的三个变量
  app.use(function (req, res, next) {
    res.locals.user = req.cookies['user']
+   res.locals.uid = req.cookies['uid']
 //   //res.locals.success = req.flash('success').toString()
 //   //res.locals.error = req.flash('error').toString()
      next()

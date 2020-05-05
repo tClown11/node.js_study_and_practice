@@ -9,6 +9,8 @@ const MysqlStore = require('mysql2')
 const config = require('config-lite')(__dirname)
 const routes = require('./routes')
 const pkg = require('./package')
+const winston = require('winston')
+const expressWinston = require('express-winston')
 
 const app = express()
 const CommentModel = require('./models/comments')
@@ -64,10 +66,46 @@ app.locals.blog = {
      next()
  })
 
+//正常请求的日志
+app.use(expressWinston.logger({
+  transports: [
+    new (winston.transports.Console)({
+      json: true,
+      colorsize: true
+    }),
+    new winston.transports.File({
+      filename: 'log/success.log'
+    })
+  ]
+}))
+
 // 路由
 routes(app)
 
-// 监听端口，启动程序
-app.listen(config.port, function () {
+//错误请求的日志
+app.use(expressWinston.errorLogger({
+  transports: [
+    new winston.transports.Console({
+      json: true,
+      colorsize: true
+    }),
+    new winston.transports.File({
+      filename: 'log/error.log'
+    })
+  ]
+}))
+
+app.use(function (err, req, res, next) {
+  console.error(err)
+  res.redirect('/posts')
+})
+
+if (module.parent) {
+  // 被 require，则导出app
+  module.exports = app
+}else {
+  // 监听端口，启动程序
+  app.listen(config.port, function () {
     console.log(`${pkg.name} listening on port ${config.port}`)
   })
+}

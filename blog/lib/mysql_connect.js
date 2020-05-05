@@ -80,11 +80,11 @@ const Comment = sequelize.define('comment', {
 // Article.sync()
 // Comment.sync()
 
-async function init(User, Article, Comment) {
-    await User.sync();
-    await Article.sync();
-    await Comment.sync();
-}
+// async function init(User, Article, Comment) {
+//     await User.sync();
+//     await Article.sync();
+//     await Comment.sync();
+// }
 
 // 创建标准关系
 // 如前所述,Sequelize 关联通常成对定义. 综上所述：
@@ -104,7 +104,7 @@ Comment.belongsTo(Article, {targetKey: 'id'});
 User.hasMany(Comment, {sourceKey: 'id'});
 Comment.belongsTo(User, {targetKey: 'id'});
 
-init(User, Article, Comment)
+//init(User, Article, Comment)
 
 
 // User.belongsTo(Article, {onDelete: 'CASCADE'});

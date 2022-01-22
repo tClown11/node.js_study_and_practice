@@ -32,7 +32,7 @@
     "marked": "^1.0.0",
     "moment": "^2.24.0",
     "mysql2": "^2.1.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.1",
     "redis": "^3.0.2",
     "sequelize": "^5.21.7",
     "sequelize-cli": "^5.5.1",
